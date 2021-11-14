@@ -1,10 +1,10 @@
 const mysql=require('mysql2')
 
 const con=mysql.createConnection({
-    host:"127.0.0.1",
-    user:"root",
-    password:"Sakthi17",
-    database:"TaskManager"
+    host:LOCALHOST,
+    user:USERNAME,
+    password:PASSWORD,
+    database:DATABASE
 })
 
 con.connect(function(err){
@@ -14,9 +14,13 @@ con.connect(function(err){
             if(err) console.log(err);
             else console.log("Connected");
         })
-        con.query("CREATE TABLE tasks (id INT AUTO_INCREMENT PRIMARY KEY,task_name VARCHAR(100) NOT NULL,taskID VARCHAR(50) NOT NULL,depending_task VARCHAR(100),created_by VARCHAR(50) NOT NULL,created_at TIME NOT NULL,start_time TIME,completed_at TIME ,isCompleted BOOLEAN NOT NULL,CONSTRAINT creater_of_task FOREIGN KEY (created_by) REFERENCES users(employee_id) ON DELETE CASCADE ON UPDATE CASCADE)",(err)=>{
+        con.query("CREATE TABLE tasks (id INT AUTO_INCREMENT PRIMARY KEY,task_name VARCHAR(100) NOT NULL,taskID VARCHAR(50) NOT NULL,depending_task VARCHAR(100),created_by VARCHAR(50) NOT NULL,created_at DATETIME NOT NULL,start_time DATETIME,completed_at DATETIME ,isCompleted BOOLEAN NOT NULL,CONSTRAINT creater_of_task FOREIGN KEY (created_by) REFERENCES users(employee_id) ON DELETE CASCADE ON UPDATE CASCADE)",(err)=>{
             if(err) console.log(err);
             else console.log("Connected");
         })
+        // con.query("DROP TABLE users",(err)=>{
+        //     if(err) console.log(err)
+        //     else console.log("Done")
+        // })
     }
 })

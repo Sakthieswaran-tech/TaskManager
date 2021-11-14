@@ -14,7 +14,6 @@ const checkToken=(req,res,next)=>{
             role:decoded.role}
         next()
     }catch(err){
-        console.log(err)
         return res.status(404).json({message:"Auth failed"})
     }
 }

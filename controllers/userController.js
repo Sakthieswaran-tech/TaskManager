@@ -6,14 +6,14 @@ const setUser=require('../middleware/checkRole')
 require('dotenv').config()
 
 const con=mysql.createConnection({
-    host:process.env.HOST,
-    user:process.env.USERNAME,
-    password:process.env.PASSWORD,
-    database:process.env.DATABASE
+    host:LOCALHOST,
+    user:USERNAME,
+    password:PASSWORD,
+    database:DATABASE
 })
 
 const getAllUsers=(req,res)=>{
-    const sql="SELECT * FROM users"
+    const sql="SELECT * FROM users ORDER BY id DESC"
     con.query(sql,(err,result,field)=>{
         if(err) return res.status(500).json({error:err})
         else return res.status(200).json({user:result})
