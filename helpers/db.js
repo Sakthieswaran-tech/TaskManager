@@ -1,20 +1,47 @@
 const mysql = require('mysql2/promise')
+const sql=require('mysql2')
 require('dotenv').config()
 
 let connection;
-const getConnection = async () => {
+let userConnect;
+const getConnection =  () => {
     if(!connection) {
-        connection = await mysql.createConnection({
-            host: process.env.mysql_host,
-            user: process.env.mysql_user,
-            password: process.env.mysql_password,
-            database: process.env.mysql_database,
-            port: process.env.mysql_port
+        connection =  mysql.createConnection({
+            host: LOCALHOST,
+            user: USERNAME,
+            password: PASSWORD,
+            database: DATABASE,
         })
     }
     return connection
 }
 
+let roleConnect;
+const getRoleConnection=()=>{
+    if(!roleConnect){
+        roleConnect =  mysql.createConnection({
+            host: LOCALHOST,
+            user: USERNAME,
+            password: PASSWORD,
+            database: DATABASE,
+        })
+    }
+    return roleConnect
+}
 
+const userConnection=async()=>{
+    if(!userConnect){
+        userConnect= await sql.createConnection({
+            host: LOCALHOST,
+            user: USERNAME,
+            password: PASSWORD,
+            database: DATABASE,
+        })
+    }
+    return userConnect
+}
+
+module.exports.userdb=userConnection
+module.exports.roledb=getRoleConnection
 module.exports.connection = getConnection
 module.exports.connectToDatabase = getConnection

@@ -2,17 +2,11 @@ const mysql=require('mysql2')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
 const checkToken = require('../middleware/jwt')
-const setUser=require('../middleware/checkRole')
 require('dotenv').config()
+const {userdb}=require('../helpers/db')
 
-const con=mysql.createConnection({
-    host:LOCALHOST,
-    user:USERNAME,
-    password:PASSWORD,
-    database:DATABASE
-})
-
-const getAllUsers=(req,res)=>{
+const getAllUsers=async(req,res)=>{
+    const con=await userdb()
     const sql="SELECT * FROM users ORDER BY id DESC"
     con.query(sql,(err,result,field)=>{
         if(err) return res.status(500).json({error:err})
@@ -21,7 +15,8 @@ const getAllUsers=(req,res)=>{
     )
 }
 
-const createUser=(req,res)=>{
+const createUser=async(req,res)=>{
+    const con=await userdb()
     const detail=req.body
     bcrypt.hash(detail.password,5,(err,hash)=>{
         if(err){
@@ -40,7 +35,8 @@ const createUser=(req,res)=>{
     })   
 }
 
-const getUser=(req,res)=>{
+const getUser=async(req,res)=>{
+    const con=await userdb()
     const sql="SELECT* FROM users WHERE employee_id=?"
     con.query(sql,[req.params.employee_id],(err,row,field)=>{
         if(err) return res.status(500).json({error:err})
@@ -54,7 +50,8 @@ const getUser=(req,res)=>{
     })
 }
 
-const editUser=(req,res)=>{
+const editUser=async(req,res)=>{
+    const con=await userdb()
     const sql="UPDATE users SET employee_reg_no=?,employee_name=?,email=?,role=? WHERE employee_id=?"
     con.query(sql,[req.body.employee_reg_no,req.body.employee_name,req.body.email,req.body.role,req.params.employee_id],(err,result,field)=>{
         if(err) return res.status(500).json({error:err})
@@ -64,7 +61,8 @@ const editUser=(req,res)=>{
     })
 }
 
-const deleteUser=(req,res)=>{
+const deleteUser=async(req,res)=>{
+    const con=await userdb()
     const sql="DELETE FROM users WHERE employee_id=?"
     con.query(sql,[req.params.employee_id],(err,result)=>{
         if(err) return res.status(500).json({error:err})
@@ -72,11 +70,11 @@ const deleteUser=(req,res)=>{
     })
 }
 
-const fetchToken=(req,res)=>{
+const fetchToken=async(req,res)=>{
+    const con=await userdb()
     const sql="SELECT * FROM users WHERE employee_id=?"
     con.query(sql,[req.body.employee_id],(err,result,field)=>{
         if(err) return res.status(500).json({error:err})
-        console.log(result[0].password)
         if(result.length<1) return res.status(404).json({message:"User not found"})
         else{
             console.log(result[0].role);

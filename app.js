@@ -5,7 +5,8 @@ const bodyparser=require('body-parser')
 const morgan=require('morgan')
 const userRoutes=require('./routes/user')
 const taskRoutes=require('./routes/task')
-const port=process.env.PORT || 3000
+const roleRoutes=require('./routes/roles')
+const port=process.env.PORT || 5000
 
 app.use(bodyparser({extended:false}))
 app.use(bodyparser.json())
@@ -13,6 +14,7 @@ app.use(morgan('dev'))
 
 app.use('/users',userRoutes)
 app.use('/tasks',taskRoutes)
+app.use('/roles',roleRoutes)
 
 app.use((req,res,next)=>{
     const error=new Error("Not found")

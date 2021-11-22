@@ -7,8 +7,8 @@ const checkToken=(req,res,next)=>{
             role:"admin"
         }
         const token=req.headers.authorization.split(" ")[1]
-        const tok=jwt.verify(token,"SECRET KEY")
-        const decoded=jwt.decode(token)
+        const tokens=jwt.verify(token,"SECRET KEY")
+        const decoded=jwt.decode(tokens)
         req.user={
             employee_id:decoded.employee_id,
             role:decoded.role}
