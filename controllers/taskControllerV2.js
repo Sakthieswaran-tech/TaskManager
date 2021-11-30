@@ -30,10 +30,10 @@ const createNewTask = async (req, res) => {
     var date = created.getFullYear() + '-' + created.getMonth() + '-' + created.getDate()
     var time = created.getHours() + ':' + created.getMinutes() + '-' + created.getSeconds()
     var dateTime = date + " " + time
-    const { task_name, taskID, depending_task_ids,assigned_to } = req.body
+    const { task_name, taskID, depending_task_ids,assigned_to,estimated_start,estimated_complete } = req.body
     const { employee_id } = req.user
     try {
-        await createNewTaskService(task_name, taskID, employee_id, depending_task_ids, dateTime,assigned_to)
+        await createNewTaskService(task_name, taskID, employee_id, depending_task_ids, dateTime,assigned_to,estimated_start,estimated_complete)
         console.log(req.body);
         return res.status(201).json({ message: "Task created" })
     } catch (error) {
@@ -72,10 +72,10 @@ const getTaskById = async (req, res) => {
 }
 
 const completeTask = async (req, res) => {
-    const { isCompleted } = req.body
+    const { isCompleted ,comments} = req.body
     const { taskID } = req.params
     try {
-        await completeTaskService(Number.parseInt(taskID), isCompleted)
+        await completeTaskService(Number.parseInt(taskID), isCompleted,comments)
         res.status(200).json({ message: "Updated successfuly" })
         return
     } catch (error) {

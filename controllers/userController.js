@@ -79,7 +79,10 @@ const fetchToken=async(req,res)=>{
         else{
             console.log(result[0].role);
             bcrypt.compare(req.body.password,result[0].password,(error,resp)=>{
-                if(error) return res.status(500).json({error:error})
+                if(error) {
+                    console.log(error);
+                    return res.status(500).json({error:error})
+                }
                 else if(resp){
                     const token=jwt.sign(
                         {

@@ -1,9 +1,9 @@
 const { connection } = require('../helpers/db')
 
-const createNewTaskService = async (taskName, taskID, employeeId, dependingTaskIds, createdDateTime,assigned_to) => {
+const createNewTaskService = async (taskName, taskID, employeeId, dependingTaskIds, createdDateTime,assigned_to,estimated_start,estimated_complete) => {
     let db = await connection()
-    const sql = "INSERT INTO tasks(task_name,taskID, created_by,created_at,start_time,completed_at,isCompleted,assigned_to) VALUE(?,?,?,?,?,?,?,?)"
-    const [result, _] = await db.query(sql, [taskName, taskID, employeeId, createdDateTime, null, null, false,assigned_to])
+    const sql = "INSERT INTO tasks(task_name,taskID, created_by,created_at,start_time,completed_at,isCompleted,assigned_to,estimated_start,estimated_complete) VALUE(?,?,?,?,?,?,?,?,?,?)"
+    const [result, _] = await db.query(sql, [taskName, taskID, employeeId, createdDateTime, null, null, false,assigned_to,estimated_start,estimated_complete])
     const insertedId = result.insertId
     if (dependingTaskIds && dependingTaskIds.length > 0) {
         await insertDependentTasks(insertedId, dependingTaskIds)
@@ -19,15 +19,15 @@ const insertDependentTasks = async (parentTaskId, dependentTaskIds) => {
     })
 }
 
-const completeTaskService = async (taskId, isCompleted) => {
+const completeTaskService = async (taskId, isCompleted,comments) => {
     let db =await connection()
     let created = new Date()
     let date = created.getFullYear() + '-' + created.getMonth() + '-' + created.getDate()
     let time = created.getHours() + ':' + created.getMinutes() + '-' + created.getSeconds()
     let dateTime = date + " " + time
-    const query = "UPDATE tasks SET completed_at=?, isCompleted=? WHERE id=?"
+    const query = "UPDATE tasks SET completed_at=?, isCompleted=? ,comments=? WHERE id=?"
     const [result, _] = await db.query(
-        query, [dateTime, isCompleted, taskId])
+        query, [dateTime, isCompleted, comments,taskId])
 }
 
 const startTaskService=async(taskID,start_time)=>{

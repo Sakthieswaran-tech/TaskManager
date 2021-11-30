@@ -7,13 +7,15 @@ const checkToken=(req,res,next)=>{
             role:"admin"
         }
         const token=req.headers.authorization.split(" ")[1]
-        const tokens=jwt.verify(token,"SECRET KEY")
-        const decoded=jwt.decode(tokens)
+        jwt.verify(token,"SECRET KEY")
+        const decoded=jwt.decode(token)
+        console.log(decoded.employee_id);
         req.user={
             employee_id:decoded.employee_id,
             role:decoded.role}
         next()
     }catch(err){
+        console.log(err);
         return res.status(404).json({message:"Auth failed"})
     }
 }

@@ -7,10 +7,10 @@ let userConnect;
 const getConnection =  () => {
     if(!connection) {
         connection =  mysql.createConnection({
-            host: LOCALHOST,
+            host: HOST,
             user: USERNAME,
             password: PASSWORD,
-            database: DATABASE,
+            database: DATABASE
         })
     }
     return connection
@@ -20,10 +20,10 @@ let roleConnect;
 const getRoleConnection=()=>{
     if(!roleConnect){
         roleConnect =  mysql.createConnection({
-            host: LOCALHOST,
+            host: HOST,
             user: USERNAME,
             password: PASSWORD,
-            database: DATABASE,
+            database: DATABASE
         })
     }
     return roleConnect
@@ -32,10 +32,10 @@ const getRoleConnection=()=>{
 const userConnection=async()=>{
     if(!userConnect){
         userConnect= await sql.createConnection({
-            host: LOCALHOST,
+            host: HOST,
             user: USERNAME,
             password: PASSWORD,
-            database: DATABASE,
+            database: DATABASE
         })
     }
     return userConnect
