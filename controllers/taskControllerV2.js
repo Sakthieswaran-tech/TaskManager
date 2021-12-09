@@ -43,11 +43,11 @@ const createNewTask = async (req, res) => {
 }
 
 const getTaskByRole=async(req,res)=>{
-    const {role}=req.query
+    const {role,completed}=req.query
     let db=await connection()
     try{
-        const sql="SELECT * FROM tasks WHERE assigned_to=? ORDER BY id DESC"
-        const [rows,fields]=await db.query(sql,[role])
+        const sql="SELECT * FROM tasks WHERE assigned_to=? AND isCompleted=? ORDER BY id DESC"
+        const [rows,fields]=await db.query(sql,[role,Number.parseInt(completed)])
         if(rows.length>0){
             return res.status(200).json({tasks:rows})
         }
@@ -70,6 +70,14 @@ const getTaskById = async (req, res) => {
         return res.status(500).json({ error: error })
     }
 }
+
+const getTasksByGroup=async(req,res)=>{
+    let db=await connection();
+    const sql="SELECT COUNT(id) AS id_count,DATE(completed_at) AS completed_count FROM tasks GROUP BY DATE(completed_at)";
+    const [row,fields]=await db.query(sql)
+    return res.status(200).json({groups:row})
+}
+
 
 const completeTask = async (req, res) => {
     const { isCompleted ,comments} = req.body
@@ -103,5 +111,6 @@ module.exports = {
     getTaskByRole,
     completeTask,
     startTask,
-    deleteTask 
+    deleteTask,
+    getTasksByGroup
 }
