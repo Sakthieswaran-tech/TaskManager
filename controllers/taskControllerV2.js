@@ -27,13 +27,14 @@ const startTask=async(req,res)=>{
 
 const createNewTask = async (req, res) => {
     var created = new Date()
-    var date = created.getFullYear() + '-' + created.getMonth() + '-' + created.getDate()
+    var month=Number.parseInt(created.getMonth())+1
+    var date = created.getFullYear() + '-' + month + '-' + created.getDate()
     var time = created.getHours() + ':' + created.getMinutes() + '-' + created.getSeconds()
     var dateTime = date + " " + time
-    const { task_name, taskID, depending_task_ids,assigned_to,estimated_start,estimated_complete } = req.body
+    const { task_name, taskID, depending_task_ids,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time } = req.body
     const { employee_id } = req.user
     try {
-        await createNewTaskService(task_name, taskID, employee_id, depending_task_ids, dateTime,assigned_to,estimated_start,estimated_complete)
+        await createNewTaskService(task_name, taskID, employee_id, depending_task_ids, dateTime,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time)
         console.log(req.body);
         return res.status(201).json({ message: "Task created" })
     } catch (error) {
@@ -72,13 +73,21 @@ const getTaskById = async (req, res) => {
 }
 
 const getTasksByGroup=async(req,res)=>{
+    
     let db=await connection();
-    const sql="SELECT COUNT(id) AS id_count,DATE(completed_at) AS completed_count FROM tasks GROUP BY DATE(completed_at)";
-    const [row,fields]=await db.query(sql)
-    return res.status(200).json({groups:row})
+    const sql="SELECT COUNT(id) AS id_count,DATE(completed_at) AS completed_count FROM tasks WHERE completed_at IS NOT NULL GROUP BY DATE(completed_at) ORDER BY completed_at";
+    const [row,fields]=await db.query(sql);
+    return res.status(200).json(row);
 }
 
-
+const getCurrentTask=async(req,res)=>{
+    const {estimated_start,role}=req.query;
+    let db=await connection();
+    const sql="SELECT * FROM tasks WHERE assigned_to=? AND estimated_start=? ORDER BY estimated_start_time ASC";
+    const [row,fields]=await db.query(sql,[role,estimated_start]);
+    console.log(row);
+    return res.status(200).json({tasks:row})
+}
 const completeTask = async (req, res) => {
     const { isCompleted ,comments} = req.body
     const { taskID } = req.params
@@ -112,5 +121,6 @@ module.exports = {
     completeTask,
     startTask,
     deleteTask,
-    getTasksByGroup
+    getTasksByGroup,
+    getCurrentTask
 }

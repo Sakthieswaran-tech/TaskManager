@@ -1,13 +1,20 @@
 const { connection } = require('../helpers/db')
 
-const createNewTaskService = async (taskName, taskID, employeeId, dependingTaskIds, createdDateTime,assigned_to,estimated_start,estimated_complete) => {
+const createNewTaskService = async (taskName, taskID, employeeId, dependingTaskIds, createdDateTime,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time) => {
     let db = await connection()
-    const sql = "INSERT INTO tasks(task_name,taskID, created_by,created_at,start_time,completed_at,isCompleted,assigned_to,estimated_start,estimated_complete) VALUE(?,?,?,?,?,?,?,?,?,?)"
-    const [result, _] = await db.query(sql, [taskName, taskID, employeeId, createdDateTime, null, null, false,assigned_to,estimated_start,estimated_complete])
-    const insertedId = result.insertId
-    if (dependingTaskIds && dependingTaskIds.length > 0) {
-        await insertDependentTasks(insertedId, dependingTaskIds)
+    if(estimated_start.length>0){
+        estimated_start.map(async(estimated_start)=>{
+        })
     }
+    for(var i=0;i<estimated_start.length;i++){
+        const sql = "INSERT INTO tasks(task_name,taskID, created_by,created_at,start_time,completed_at,isCompleted,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time) VALUE(?,?,?,?,?,?,?,?,?,?,?,?)"
+        const [result, _] = await db.query(sql, [taskName, taskID, employeeId, createdDateTime, null, null, false,assigned_to,estimated_start[i],estimated_complete[i],estimated_start_time,estimated_complete_time])
+        const insertedId = result.insertId
+        if (dependingTaskIds && dependingTaskIds.length > 0) {
+            await insertDependentTasks(insertedId, dependingTaskIds)
+        }
+    }
+    
 }
 
 const insertDependentTasks = async (parentTaskId, dependentTaskIds) => {
@@ -38,7 +45,7 @@ const startTaskService=async(taskID,start_time)=>{
 
 
 const getTaskByIdService = async (id) => {
-    const sql = "SELECT * FROM tasks WHERE id=?"
+    const sql = "SELECT * FROM tasks  WHERE id=?"
     let db = await connection()
     id = parseInt(id, 10)
     const [rows, fields] = await db.query(sql, [id])
