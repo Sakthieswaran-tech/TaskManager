@@ -43,7 +43,7 @@ const createNewTask = async (req, res) => {
     }
 }
 
-const getTaskByRole=async(req,res)=>{
+const getTaskByRoleAndStatus=async(req,res)=>{
     const {role,completed}=req.query
     let db=await connection()
     try{
@@ -80,6 +80,21 @@ const getTasksByGroup=async(req,res)=>{
     return res.status(200).json(row);
 }
 
+const getRangeTasks=async(req,res)=>{
+    const {from_date,to_date,role}=req.query;
+    let db=await connection();
+    try{
+        const sql="SELECT * FROM tasks WHERE assigned_to=? AND estimated_start BETWEEN ? AND ? ";
+        const [row,fields]=await db.query(sql,[role,from_date,to_date]);
+        console.log(row);
+        return res.status(200).json({tasks:row})
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).json({error:err})
+    }
+}
+
 const getCurrentTask=async(req,res)=>{
     const {estimated_start,role}=req.query;
     let db=await connection();
@@ -113,14 +128,51 @@ const deleteTask = async (req, res) => {
     }
 }
 
+const getByDatesOnly=async(req,res)=>{
+    let db=await connection();
+    const {from_date,to_date}=req.query;
+    try{
+        const sql="SELECT * FROM tasks WHERE estimated_start BETWEEN ? AND ?";
+        const [rows,fields]=await db.query(sql,[from_date,to_date]);
+        if(rows.length>1){
+            return res.status(200).json({tasks:rows});
+        }else{
+            return res.status(404).json({message:"Not found"})
+        }
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({error:err});
+    }
+}
+
+const getByRole=async(req,res)=>{
+    let db=await connection();
+    const {role}=req.query;
+    try{
+        const sql="SELECT * FROM tasks WHERE assigned_to=?";
+        const [rows,fields]=await db.query(sql,[role]);
+        if(rows.length>1){
+            return res.status(200).json({tasks:rows});
+        }else{
+            return res.status(404).json({message:"Not found"})
+        }
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({error:err});
+    }
+}
+
 module.exports = { 
     getAllTasks,
     createNewTask,
     getTaskById,
-    getTaskByRole,
+    getTaskByRoleAndStatus,
     completeTask,
     startTask,
     deleteTask,
     getTasksByGroup,
-    getCurrentTask
+    getByDatesOnly,
+    getCurrentTask,
+    getRangeTasks,
+    getByRole   
 }

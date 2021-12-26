@@ -17,7 +17,7 @@ const createNewRole=async(req,res)=>{
 const getAllRoles=async(req,res)=>{
     try{
     let db=await roledb()
-    const sql="SELECT * FROM roles"
+    const sql="SELECT * FROM roles ORDER BY role"
 
     const [rows,fields]=await db.query(sql)
     return res.status(200).json({roles:rows})
