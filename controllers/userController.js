@@ -123,7 +123,7 @@ const fetchOtp=async(req,res)=>{
             console.log(otp);
 
             var mailOptions={
-                from:"sakthichunkz17@gmail.com",
+                from:"mail",
                 to:email,
                 subject:"otp ",
                 html:"<h3>OTP FOR account </h3>"+otp
