@@ -31,7 +31,7 @@ const createNewTask = async (req, res) => {
     var date = created.getFullYear() + '-' + month + '-' + created.getDate()
     var time = created.getHours() + ':' + created.getMinutes() + '-' + created.getSeconds()
     var dateTime = date + " " + time
-    const { task_name, taskID, depending_task_ids,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time } = req.body
+    const { task_name, taskID, depending_task_ids,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time,recur } = req.body
     const { employee_id } = req.user
     try {
         await createNewTaskService(task_name, taskID, employee_id, depending_task_ids, dateTime,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time)
@@ -149,9 +149,9 @@ const getByRole=async(req,res)=>{
     let db=await connection();
     const {role}=req.query;
     try{
-        const sql="SELECT * FROM tasks WHERE assigned_to=?";
+        const sql="SELECT * FROM tasks WHERE assigned_to=? ORDER BY estimated_start";
         const [rows,fields]=await db.query(sql,[role]);
-        if(rows.length>1){
+        if(rows.length>=1){
             return res.status(200).json({tasks:rows});
         }else{
             return res.status(404).json({message:"Not found"})

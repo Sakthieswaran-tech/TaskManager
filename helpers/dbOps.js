@@ -1,14 +1,14 @@
 const { connection } = require('../helpers/db')
 
-const createNewTaskService = async (taskName, taskID, employeeId, dependingTaskIds, createdDateTime,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time) => {
+const createNewTaskService = async (taskName, taskID, employeeId, dependingTaskIds, createdDateTime,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time,recur) => {
     let db = await connection()
     if(estimated_start.length>0){
         estimated_start.map(async(estimated_start)=>{
         })
     }
     for(var i=0;i<estimated_start.length;i++){
-        const sql = "INSERT INTO tasks(task_name,taskID, created_by,created_at,start_time,completed_at,isCompleted,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time) VALUE(?,?,?,?,?,?,?,?,?,?,?,?)"
-        const [result, _] = await db.query(sql, [taskName, taskID, employeeId, createdDateTime, null, null, false,assigned_to,estimated_start[i],estimated_complete[i],estimated_start_time,estimated_complete_time])
+        const sql = "INSERT INTO tasks(task_name,taskID, created_by,created_at,start_time,completed_at,isCompleted,assigned_to,estimated_start,estimated_complete,estimated_start_time,estimated_complete_time,recur) VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        const [result, _] = await db.query(sql, [taskName, taskID, employeeId, createdDateTime, null, null, false,assigned_to,estimated_start[i],estimated_complete[i],estimated_start_time,estimated_complete_time,recur])
         const insertedId = result.insertId
         if (dependingTaskIds && dependingTaskIds.length > 0) {
             await insertDependentTasks(insertedId, dependingTaskIds)

@@ -1,5 +1,6 @@
 const express=require('express')
-const {getAllUsers,createUser,getUser,editUser, deleteUser, fetchToken, fetchOtp, verifyOtp, changePassword} = require('../controllers/userController')
+const { fetchOtp, verifyOtp, changePassword } = require('../controllers/password-reset')
+const {getAllUsers,createUser,getUser,editUser, deleteUser, fetchToken} = require('../controllers/userController')
 const { checkRole, checkAdmin } = require('../middleware/checkRole')
 const checkToken = require('../middleware/jwt')
 const routers=express.Router()
@@ -10,11 +11,11 @@ routers.route('/:employee_id').get(checkToken,getUser).put(checkToken,checkAdmin
 
 routers.route('/login').post(fetchToken)
 
-routers.route('/otp').post(fetchOtp);
+routers.route('/createOtp').post(fetchOtp);
 
-routers.route('/verify').post(verifyOtp)
+routers.route('/verifyOtp').post(verifyOtp)
 
-routers.route('/changepass').post(changePassword)
+routers.route('/changepassword').post(changePassword)
 
 module.exports=routers
 
